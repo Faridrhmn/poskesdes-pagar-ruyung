@@ -1,0 +1,4 @@
+now create an /admin route on my next js which would direct to /admin/login and if success 
+login would direct to /admin/dashboard, using the API @admin.php , 
+the api url should be api.vadr.my.id/simba/{file.php}, always call  
+api from next js app/api connector proxy and env from process.env.API_KEY.
