@@ -321,7 +321,7 @@ export default function AdminUsersPage() {
               </tr>
             ) : (
               admins.map((admin) => (
-                <tr key={admin.id}>
+                <tr key={admin.id || admin.id_pasien || admin.id_anc || admin.id_kb || admin.id_lansia || admin.id_jadwal || admin.id_edukasi || admin.id_admin}>
                   <td>{admin.id}</td>
                   <td className="username-cell">{admin.username}</td>
                   <td>

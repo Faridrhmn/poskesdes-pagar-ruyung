@@ -112,7 +112,7 @@ export function HomeSection() {
           </div>
         ) : (
           upcomingSchedules.map((schedule) => (
-            <div key={schedule.id} className="item">
+            <div key={schedule.id || schedule.id_pasien || schedule.id_anc || schedule.id_kb || schedule.id_lansia || schedule.id_jadwal || schedule.id_edukasi || schedule.id_admin} className="item">
               <div>
                 <div style={{ fontWeight: 700 }}>{schedule.nama}</div>
                 <div className="muted">{formatTanggal(schedule.tanggal)} • {schedule.jenis}</div>

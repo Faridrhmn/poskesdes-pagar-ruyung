@@ -41,9 +41,19 @@ async function apiRequest<T>(endpoint: string, options: ApiRequestOptions = {}):
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, config)
     const data = await response.json()
 
+
     if (!response.ok) {
+      if (response.status === 401) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          window.alert('Sesi Login Anda telah habis (Token Expired). Anda akan diarahkan ke halaman Login.')
+          window.location.href = '/admin/login'
+        }
+      }
       throw new Error(data.message || `API request failed: ${response.status}`)
     }
+
 
     return data
   } catch (error) {
@@ -59,7 +69,8 @@ async function apiRequest<T>(endpoint: string, options: ApiRequestOptions = {}):
 // =====================================================
 
 export interface Pasien {
-  id: string
+  id?: string;
+  id_pasien?: string
   nomor_cm: string
   nama: string
   nik?: string
@@ -87,7 +98,8 @@ export const pasienApi = {
 // =====================================================
 
 export interface AncRecord {
-  id: string
+  id?: string;
+  id_anc?: string
   pasien_id?: string
   pasien_nama: string
   tanggal: string
@@ -141,7 +153,8 @@ export const ancApi = {
 // =====================================================
 
 export interface KbRecord {
-  id: string
+  id?: string;
+  id_kb?: string
   pasien_id?: string
   pasien_nama: string
   tanggal: string
@@ -168,7 +181,8 @@ export const kbApi = {
 // =====================================================
 
 export interface LansiaRecord {
-  id: string
+  id?: string;
+  id_lansia?: string
   pasien_id?: string
   pasien_nama: string
   tanggal: string
@@ -199,7 +213,8 @@ export const lansiaApi = {
 // =====================================================
 
 export interface Jadwal {
-  id: string
+  id?: string;
+  id_jadwal?: string
   nama: string
   tanggal: string
   jenis: string
@@ -223,7 +238,8 @@ export const jadwalApi = {
 // =====================================================
 
 export interface EducationMaterial {
-  id: string
+  id?: string;
+  id_edukasi?: string
   title: string
   body: string
   created_at?: string

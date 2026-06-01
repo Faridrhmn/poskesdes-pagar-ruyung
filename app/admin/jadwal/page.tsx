@@ -221,7 +221,7 @@ export default function AdminJadwalPage() {
               </tr>
             ) : (
               filteredJadwal.map((j) => (
-                <tr key={j.id}>
+                <tr key={(j.id || j.id_jadwal)}>
                   <td>{getStatusBadge(j.tanggal)}</td>
                   <td>{formatDate(j.tanggal)}</td>
                   <td className="name-cell">{j.nama}</td>

@@ -20,14 +20,14 @@ class LansiaApi {
     }
 
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY tanggal DESC";
+        $query = "SELECT *, id_lansia AS id FROM " . $this->table_name . " ORDER BY tanggal DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
 
     public function readOne($id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT *, id_lansia AS id FROM " . $this->table_name . " WHERE id_lansia = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
@@ -35,7 +35,7 @@ class LansiaApi {
     }
 
     public function readByPasien($pasien_id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE pasien_id = ? ORDER BY tanggal DESC";
+        $query = "SELECT *, id_lansia AS id FROM " . $this->table_name . " WHERE pasien_id = ? ORDER BY tanggal DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $pasien_id);
         $stmt->execute();
@@ -44,7 +44,7 @@ class LansiaApi {
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id, pasien_id, pasien_nama, tanggal, keluhan_lansia, diagnosa_lansia, bb, tb, td, gds, asam_urat, kolesterol, tindakan_lansia, jadwal_kontrol_lansia)
+                  (id_lansia, pasien_id, pasien_nama, tanggal, keluhan_lansia, diagnosa_lansia, bb, tb, td, gds, asam_urat, kolesterol, tindakan_lansia, jadwal_kontrol_lansia)
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
@@ -67,7 +67,7 @@ class LansiaApi {
     }
 
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_lansia = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         return $stmt->execute();
@@ -123,6 +123,13 @@ try {
             
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
             
             if (!empty($data['id']) && !empty($data['pasien_nama']) && !empty($data['tanggal']) && !empty($data['keluhan_lansia']) && !empty($data['diagnosa_lansia']) && !empty($data['td'])) {
                 if ($api->create($data)) {

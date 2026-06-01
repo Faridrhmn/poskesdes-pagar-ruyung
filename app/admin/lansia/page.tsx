@@ -161,7 +161,7 @@ export default function AdminLansiaPage() {
               </tr>
             ) : (
               filteredRecords.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id || r.id_pasien || r.id_anc || r.id_kb || r.id_lansia || r.id_jadwal || r.id_edukasi || r.id_admin}>
                   <td>{formatDate(r.tanggal)}</td>
                   <td className="name-cell">{r.pasien_nama}</td>
                   <td className="keluhan-cell">{r.keluhan_lansia || "-"}</td>

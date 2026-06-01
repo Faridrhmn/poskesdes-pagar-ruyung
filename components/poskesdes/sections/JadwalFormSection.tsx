@@ -137,7 +137,7 @@ export function JadwalFormSection() {
       setFormData({ ...formData, pasien_id: "", isNonPasien: true, nama: "" })
       setPasienSearchQuery("")
     } else if (pasienId && pasienId !== "") {
-      const selectedPasien = pasienList.find((p) => p.id === pasienId)
+      const selectedPasien = pasienList.find((p) => (p.id || p.id_pasien) === pasienId)
       if (selectedPasien) {
         setFormData({
           ...formData,
@@ -266,7 +266,7 @@ export function JadwalFormSection() {
                     )
                   })
                   .map((pasien) => (
-                    <option key={pasien.id} value={pasien.id}>
+                    <option key={(pasien.id || pasien.id_pasien)} value={(pasien.id || pasien.id_pasien)}>
                       {pasien.nomor_cm || "—"} — {pasien.nama}
                     </option>
                   ))}

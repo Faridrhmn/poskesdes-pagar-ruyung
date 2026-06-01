@@ -33,7 +33,7 @@ class AdminApi {
      * @return array Returns: ['ok' => true, 'admin' => [...], 'token' => '...'] on success
      */
     public function login($username, $password) {
-        $stmt = $this->conn->prepare("SELECT id, username, password_hash, role FROM " . $this->table_name . " WHERE username = ? LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT id_admin AS id, username, password_hash, role FROM " . $this->table_name . " WHERE username = ? LIMIT 1");
         $stmt->bindParam(1, $username);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -77,7 +77,7 @@ class AdminApi {
      */
     public function create($username, $password, $role = 'regular') {
         // Check if username already exists
-        $stmt = $this->conn->prepare("SELECT id FROM " . $this->table_name . " WHERE username = ? LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT id_admin AS id FROM " . $this->table_name . " WHERE username = ? LIMIT 1");
         $stmt->bindParam(1, $username);
         $stmt->execute();
         if ($stmt->fetch()) {
@@ -121,9 +121,9 @@ class AdminApi {
         
         // Build query based on whether updated_at exists
         if ($hasUpdatedAt) {
-            $stmt = $this->conn->prepare("SELECT id, username, role, created_at, updated_at FROM " . $this->table_name . " ORDER BY created_at DESC");
+            $stmt = $this->conn->prepare("SELECT id_admin AS id, username, role, created_at, updated_at FROM " . $this->table_name . " ORDER BY created_at DESC");
         } else {
-            $stmt = $this->conn->prepare("SELECT id, username, role, created_at, NULL as updated_at FROM " . $this->table_name . " ORDER BY created_at DESC");
+            $stmt = $this->conn->prepare("SELECT id_admin AS id, username, role, created_at, NULL as updated_at FROM " . $this->table_name . " ORDER BY created_at DESC");
         }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -140,7 +140,7 @@ class AdminApi {
             return [ 'ok' => false, 'message' => 'Invalid role' ];
         }
 
-        $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET role = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET role = ? WHERE id_admin = ?");
         $stmt->bindParam(1, $role);
         $stmt->bindParam(2, $adminId);
         
@@ -157,7 +157,7 @@ class AdminApi {
      * @return array
      */
     public function deleteAdmin($adminId) {
-        $stmt = $this->conn->prepare("DELETE FROM " . $this->table_name . " WHERE id = ?");
+        $stmt = $this->conn->prepare("DELETE FROM " . $this->table_name . " WHERE id_admin = ?");
         $stmt->bindParam(1, $adminId);
         
         if ($stmt->execute()) {
@@ -176,7 +176,7 @@ class AdminApi {
      */
     public function updateAdmin($adminId, $username, $role) {
         // Check if username already exists (excluding current admin)
-        $stmt = $this->conn->prepare("SELECT id FROM " . $this->table_name . " WHERE username = ? AND id != ? LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT id_admin AS id FROM " . $this->table_name . " WHERE username = ? AND id != ? LIMIT 1");
         $stmt->bindParam(1, $username);
         $stmt->bindParam(2, $adminId);
         $stmt->execute();
@@ -195,9 +195,9 @@ class AdminApi {
         
         // Build update query based on whether updated_at exists
         if ($hasUpdatedAt) {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET username = ?, role = ?, updated_at = NOW() WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET username = ?, role = ?, updated_at = NOW() WHERE id_admin = ?");
         } else {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET username = ?, role = ? WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET username = ?, role = ? WHERE id_admin = ?");
         }
         $stmt->bindParam(1, $username);
         $stmt->bindParam(2, $role);
@@ -229,9 +229,9 @@ class AdminApi {
         
         // Build update query based on whether updated_at exists
         if ($hasUpdatedAt) {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ?, updated_at = NOW() WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ?, updated_at = NOW() WHERE id_admin = ?");
         } else {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id_admin = ?");
         }
         $stmt->bindParam(1, $newPasswordHash);
         $stmt->bindParam(2, $adminId);
@@ -252,7 +252,7 @@ class AdminApi {
      */
     public function changePassword($adminId, $oldPassword, $newPassword) {
         // Verify old password
-        $stmt = $this->conn->prepare("SELECT password_hash FROM " . $this->table_name . " WHERE id = ? LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT password_hash FROM " . $this->table_name . " WHERE id_admin = ? LIMIT 1");
         $stmt->bindParam(1, $adminId);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -274,9 +274,9 @@ class AdminApi {
         
         // Build update query based on whether updated_at exists
         if ($hasUpdatedAt) {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ?, updated_at = NOW() WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ?, updated_at = NOW() WHERE id_admin = ?");
         } else {
-            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id_admin = ?");
         }
         $stmt->bindParam(1, $newPasswordHash);
         $stmt->bindParam(2, $adminId);

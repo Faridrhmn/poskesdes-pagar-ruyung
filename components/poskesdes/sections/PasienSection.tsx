@@ -129,7 +129,7 @@ export function PasienSection() {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {filteredPasien.map((pasien) => (
                 <div
-                  key={pasien.id}
+                  key={(pasien.id || pasien.id_pasien)}
                   className="card agenda item"
                   style={{
                     borderLeft: "4px solid var(--teal-600)",
@@ -172,7 +172,7 @@ export function PasienSection() {
                       type="button"
                       className="small-btn"
                       onClick={() => {
-                        window.location.hash = `pasien-form?id=${pasien.id}`
+                        window.location.hash = `pasien-form?id=${(pasien.id || pasien.id_pasien)}`
                       }}
                       style={{ background: "#e0f2f1", color: "var(--teal-600)", fontSize: "11px" }}
                     >
@@ -181,7 +181,7 @@ export function PasienSection() {
                     <button
                       type="button"
                       className="small-btn"
-                      onClick={() => handleDelete(pasien.id, pasien.nama)}
+                      onClick={() => handleDelete((pasien.id || pasien.id_pasien), pasien.nama)}
                       style={{ background: "#fee2e2", color: "#dc2626", fontSize: "11px" }}
                     >
                       🗑️ Hapus

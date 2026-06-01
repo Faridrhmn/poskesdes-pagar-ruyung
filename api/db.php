@@ -11,9 +11,9 @@
 class Database {
     // Database configuration
     private $host = 'localhost';
-    private $db_name = 'vade3664_bidan';
-    private $username = 'vade3664_bidan';
-    private $password = 'bidanxy123zz';
+    private $db_name = 'poskesdes_pagar_ruyung_old';
+    private $username = 'root';
+    private $password = '5';
     private $conn;
 
     /**

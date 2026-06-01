@@ -42,7 +42,7 @@ class PasienApi {
      * Get all patients
      */
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY nomor_cm ASC, tgl_daftar DESC";
+        $query = "SELECT *, id_pasien AS id FROM " . $this->table_name . " ORDER BY nomor_cm ASC, tgl_daftar DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -52,7 +52,7 @@ class PasienApi {
      * Get single patient by ID
      */
     public function readOne($id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT *, id_pasien AS id FROM " . $this->table_name . " WHERE id_pasien = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
@@ -69,7 +69,7 @@ class PasienApi {
         }
         
         $query = "INSERT INTO " . $this->table_name . "
-                  (id, nomor_cm, nama, nik, no_kk, no_hp, no_kis, pendidikan, alamat, usia_kehamilan, tgl_daftar)
+                  (id_pasien, nomor_cm, nama, nik, no_kk, no_hp, no_kis, pendidikan, alamat, usia_kehamilan, tgl_daftar)
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
@@ -95,7 +95,7 @@ class PasienApi {
         $query = "UPDATE " . $this->table_name . "
                   SET nama = ?, nik = ?, no_kk = ?, no_hp = ?, no_kis = ?, 
                       pendidikan = ?, alamat = ?, usia_kehamilan = ?
-                  WHERE id = ?";
+                  WHERE id_pasien = ?";
         $stmt = $this->conn->prepare($query);
         
         $stmt->bindParam(1, $data['nama']);
@@ -115,7 +115,7 @@ class PasienApi {
      * Delete patient
      */
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_pasien = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         return $stmt->execute();
@@ -166,6 +166,13 @@ try {
             
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
             
             if (!empty($data['id']) && !empty($data['nama']) && !empty($data['no_hp']) && !empty($data['tgl_daftar'])) {
                 if ($api->create($data)) {
@@ -190,6 +197,13 @@ try {
             if ($path && preg_match('/^(.+)$/', $path, $matches)) {
                 $id = $matches[1];
                 $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
                 
                 if (!empty($data['nama']) && !empty($data['no_hp'])) {
                     if ($api->update($id, $data)) {

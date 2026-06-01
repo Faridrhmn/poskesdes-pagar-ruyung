@@ -174,7 +174,7 @@ export function ScheduleAlarm() {
                   <strong>📅 Hari Ini ({todaySchedules.length} jadwal):</strong>
                   <div style={{ marginTop: "4px", marginLeft: "12px" }}>
                     {todaySchedules.map((schedule) => (
-                      <div key={schedule.id} style={{ marginBottom: "4px" }}>
+                      <div key={schedule.id || schedule.id_pasien || schedule.id_anc || schedule.id_kb || schedule.id_lansia || schedule.id_jadwal || schedule.id_edukasi || schedule.id_admin} style={{ marginBottom: "4px" }}>
                         • {schedule.nama} - {schedule.jenis} ({formatTanggal(schedule.tanggal)})
                       </div>
                     ))}
@@ -186,7 +186,7 @@ export function ScheduleAlarm() {
                   <strong>📆 Besok ({tomorrowSchedules.length} jadwal):</strong>
                   <div style={{ marginTop: "4px", marginLeft: "12px" }}>
                     {tomorrowSchedules.map((schedule) => (
-                      <div key={schedule.id} style={{ marginBottom: "4px" }}>
+                      <div key={schedule.id || schedule.id_pasien || schedule.id_anc || schedule.id_kb || schedule.id_lansia || schedule.id_jadwal || schedule.id_edukasi || schedule.id_admin} style={{ marginBottom: "4px" }}>
                         • {schedule.nama} - {schedule.jenis} ({formatTanggal(schedule.tanggal)})
                       </div>
                     ))}

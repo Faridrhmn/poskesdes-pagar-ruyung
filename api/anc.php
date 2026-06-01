@@ -20,14 +20,14 @@ class AncApi {
     }
 
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY tanggal DESC";
+        $query = "SELECT *, id_anc AS id FROM " . $this->table_name . " ORDER BY tanggal DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
 
     public function readOne($id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT *, id_anc AS id FROM " . $this->table_name . " WHERE id_anc = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
@@ -35,7 +35,7 @@ class AncApi {
     }
 
     public function readByPasien($pasien_id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE pasien_id = ? ORDER BY tanggal DESC";
+        $query = "SELECT *, id_anc AS id FROM " . $this->table_name . " WHERE pasien_id = ? ORDER BY tanggal DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $pasien_id);
         $stmt->execute();
@@ -44,7 +44,7 @@ class AncApi {
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id, pasien_id, pasien_nama, tanggal, kunjungan_ke, k_status, usg_status, status_4t,
+                  (id_anc, pasien_id, pasien_nama, tanggal, kunjungan_ke, k_status, usg_status, status_4t,
                    gravida, para, abortus, hpht, hpl, keluhan_utama,
                    td, nadi, suhu, bb, tb, edema,
                    djj, tfu, posisi_janin, gerak_janin,
@@ -97,7 +97,7 @@ class AncApi {
     }
 
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_anc = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         return $stmt->execute();
@@ -153,6 +153,13 @@ try {
             
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
             
             if (!empty($data['id']) && !empty($data['pasien_nama']) && !empty($data['tanggal'])) {
                 if ($api->create($data)) {

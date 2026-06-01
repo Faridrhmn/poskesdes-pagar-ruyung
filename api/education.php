@@ -20,14 +20,14 @@ class EducationApi {
     }
 
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY created_at DESC";
+        $query = "SELECT *, id_edukasi AS id FROM " . $this->table_name . " ORDER BY created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
 
     public function readOne($id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT *, id_edukasi AS id FROM " . $this->table_name . " WHERE id_edukasi = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
@@ -36,7 +36,7 @@ class EducationApi {
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id, title, body)
+                  (id_edukasi, title, body)
                   VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
@@ -50,7 +50,7 @@ class EducationApi {
     public function update($id, $data) {
         $query = "UPDATE " . $this->table_name . "
                   SET title = ?, body = ?
-                  WHERE id = ?";
+                  WHERE id_edukasi = ?";
         $stmt = $this->conn->prepare($query);
         
         $stmt->bindParam(1, $data['title']);
@@ -61,7 +61,7 @@ class EducationApi {
     }
 
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_edukasi = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         return $stmt->execute();
@@ -111,6 +111,13 @@ try {
             
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
             
             if (!empty($data['id']) && !empty($data['title']) && !empty($data['body'])) {
                 if ($api->create($data)) {
@@ -130,6 +137,13 @@ try {
             if ($path && preg_match('/^(.+)$/', $path, $matches)) {
                 $id = $matches[1];
                 $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
                 
                 if (!empty($data['title']) && !empty($data['body'])) {
                     if ($api->update($id, $data)) {

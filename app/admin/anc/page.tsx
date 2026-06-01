@@ -197,7 +197,7 @@ export default function AdminAncPage() {
               </tr>
             ) : (
               filteredRecords.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id || r.id_pasien || r.id_anc || r.id_kb || r.id_lansia || r.id_jadwal || r.id_edukasi || r.id_admin}>
                   <td>{formatDate(r.tanggal)}</td>
                   <td className="name-cell">{r.pasien_nama}</td>
                   <td style={{ textAlign: "center" }}>{r.kunjungan_ke || "-"}</td>

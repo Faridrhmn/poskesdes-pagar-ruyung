@@ -392,7 +392,7 @@ export function JadwalSection() {
 
                 return (
                   <div
-                    key={schedule.id}
+                    key={schedule.id || schedule.id_pasien || schedule.id_anc || schedule.id_kb || schedule.id_lansia || schedule.id_jadwal || schedule.id_edukasi || schedule.id_admin}
                     style={{
                       borderLeft: `4px solid ${badge.border}`,
                       background: isUrgent ? "#fffbf0" : "#fff",

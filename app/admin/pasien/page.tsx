@@ -142,7 +142,7 @@ export default function AdminPasienPage() {
               </tr>
             ) : (
               filteredPasien.map((p) => (
-                <tr key={p.id}>
+                <tr key={(p.id || p.id_pasien)}>
                   <td className="cm-cell">{p.nomor_cm}</td>
                   <td className="name-cell">{p.nama}</td>
                   <td>{p.nik || "-"}</td>

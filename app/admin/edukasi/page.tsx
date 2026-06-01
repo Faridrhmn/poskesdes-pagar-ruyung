@@ -100,7 +100,7 @@ export default function AdminEdukasiPage() {
           </div>
         ) : (
           filteredMaterials.map((m) => (
-            <div key={m.id} className="material-card">
+            <div key={m.id || m.id_pasien || m.id_anc || m.id_kb || m.id_lansia || m.id_jadwal || m.id_edukasi || m.id_admin} className="material-card">
               <div
                 className="material-header"
                 onClick={() => setExpandedId(expandedId === m.id ? null : m.id)}

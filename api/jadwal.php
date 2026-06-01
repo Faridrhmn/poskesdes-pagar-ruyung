@@ -20,14 +20,14 @@ class JadwalApi {
     }
 
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY tanggal ASC";
+        $query = "SELECT *, id_jadwal AS id FROM " . $this->table_name . " ORDER BY tanggal ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
 
     public function readUpcoming($limit = 5) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE tanggal >= CURDATE() ORDER BY tanggal ASC LIMIT ?";
+        $query = "SELECT *, id_jadwal AS id FROM " . $this->table_name . " WHERE tanggal >= CURDATE() ORDER BY tanggal ASC LIMIT ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -35,7 +35,7 @@ class JadwalApi {
     }
 
     public function readOne($id) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT *, id_jadwal AS id FROM " . $this->table_name . " WHERE id_jadwal = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
@@ -44,7 +44,7 @@ class JadwalApi {
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . "
-                  (id, nama, tanggal, jenis, cara, pasien_id)
+                  (id_jadwal, nama, tanggal, jenis, cara, pasien_id)
                   VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
@@ -61,7 +61,7 @@ class JadwalApi {
     public function update($id, $data) {
         $query = "UPDATE " . $this->table_name . "
                   SET nama = ?, tanggal = ?, jenis = ?, cara = ?, pasien_id = ?
-                  WHERE id = ?";
+                  WHERE id_jadwal = ?";
         $stmt = $this->conn->prepare($query);
         
         $pasien_id = isset($data['pasien_id']) && !empty($data['pasien_id']) ? $data['pasien_id'] : null;
@@ -77,7 +77,7 @@ class JadwalApi {
     }
 
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id_jadwal = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         return $stmt->execute();
@@ -133,6 +133,13 @@ try {
             
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
             
             if (!empty($data['id']) && !empty($data['nama']) && !empty($data['tanggal']) && !empty($data['jenis']) && !empty($data['cara'])) {
                 if ($api->create($data)) {
@@ -152,6 +159,13 @@ try {
             if ($path && preg_match('/^(.+)$/', $path, $matches)) {
                 $id = $matches[1];
                 $data = json_decode(file_get_contents('php://input'), true);
+            // Convert empty strings to null to prevent MySQL strict mode errors
+            foreach ($data as $key => $value) {
+                if ($value === '') {
+                    $data[$key] = null;
+                }
+            }
+
                 
                 if (!empty($data['nama']) && !empty($data['tanggal']) && !empty($data['jenis']) && !empty($data['cara'])) {
                     if ($api->update($id, $data)) {

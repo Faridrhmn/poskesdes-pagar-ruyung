@@ -27,7 +27,7 @@
 -- di form ANC, KB, dan Lansia untuk memilih pasien yang akan diperiksa
 -- =====================================================
 CREATE TABLE pasien (
-    id VARCHAR(50) PRIMARY KEY,
+    id_pasien VARCHAR(50) PRIMARY KEY,
     nomor_cm VARCHAR(20) UNIQUE NOT NULL,
     nama VARCHAR(255) NOT NULL,
     nik VARCHAR(20),
@@ -53,7 +53,7 @@ CREATE TABLE pasien (
 -- Setiap record adalah satu kunjungan pemeriksaan ibu hamil
 -- =====================================================
 CREATE TABLE anc_records (
-    id VARCHAR(50) PRIMARY KEY,
+    id_anc VARCHAR(50) PRIMARY KEY,
     pasien_id VARCHAR(50),
     pasien_nama VARCHAR(255) NOT NULL,
     tanggal DATE NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE anc_records (
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (pasien_id) REFERENCES pasien(id) ON DELETE SET NULL,
+    FOREIGN KEY (pasien_id) REFERENCES pasien(id_pasien) ON DELETE SET NULL,
     INDEX idx_pasien_id (pasien_id),
     INDEX idx_tanggal (tanggal),
     INDEX idx_k_status (k_status)
@@ -123,7 +123,7 @@ CREATE TABLE anc_records (
 -- Setiap record adalah satu pelayanan/kontrol KB
 -- =====================================================
 CREATE TABLE kb_records (
-    id VARCHAR(50) PRIMARY KEY,
+    id_kb VARCHAR(50) PRIMARY KEY,
     pasien_id VARCHAR(50),
     pasien_nama VARCHAR(255) NOT NULL,
     tanggal DATE NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE kb_records (
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (pasien_id) REFERENCES pasien(id) ON DELETE SET NULL,
+    FOREIGN KEY (pasien_id) REFERENCES pasien(id_pasien) ON DELETE SET NULL,
     INDEX idx_pasien_id (pasien_id),
     INDEX idx_tanggal (tanggal),
     INDEX idx_status_peserta (status_peserta),
@@ -155,7 +155,7 @@ CREATE TABLE kb_records (
 -- Setiap record adalah satu kunjungan pemeriksaan lansia
 -- =====================================================
 CREATE TABLE lansia_records (
-    id VARCHAR(50) PRIMARY KEY,
+    id_lansia VARCHAR(50) PRIMARY KEY,
     pasien_id VARCHAR(50),
     pasien_nama VARCHAR(255) NOT NULL,
     tanggal DATE NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE lansia_records (
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (pasien_id) REFERENCES pasien(id) ON DELETE SET NULL,
+    FOREIGN KEY (pasien_id) REFERENCES pasien(id_pasien) ON DELETE SET NULL,
     INDEX idx_pasien_id (pasien_id),
     INDEX idx_tanggal (tanggal),
     INDEX idx_diagnosa (diagnosa_lansia)
@@ -194,7 +194,7 @@ CREATE TABLE lansia_records (
 -- Jadwal bisa dibuat manual atau otomatis dari form ANC/KB/Lansia
 -- =====================================================
 CREATE TABLE jadwal (
-    id VARCHAR(50) PRIMARY KEY,
+    id_jadwal VARCHAR(50) PRIMARY KEY,
     nama VARCHAR(255) NOT NULL,
     tanggal DATE NOT NULL,
     jenis VARCHAR(50) NOT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE jadwal (
     pasien_id VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (pasien_id) REFERENCES pasien(id) ON DELETE SET NULL,
+    FOREIGN KEY (pasien_id) REFERENCES pasien(id_pasien) ON DELETE SET NULL,
     INDEX idx_tanggal (tanggal),
     INDEX idx_jenis (jenis),
     INDEX idx_pasien_id (pasien_id)
@@ -216,7 +216,7 @@ CREATE TABLE jadwal (
 -- Digunakan untuk memberikan informasi kesehatan kepada pasien
 -- =====================================================
 CREATE TABLE education_materials (
-    id VARCHAR(50) PRIMARY KEY,
+    id_edukasi VARCHAR(50) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -231,7 +231,7 @@ CREATE TABLE education_materials (
 -- Role: superadmin (full access), regular (view only)
 -- =====================================================
 CREATE TABLE admins (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_admin INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('superadmin', 'regular') DEFAULT 'regular',

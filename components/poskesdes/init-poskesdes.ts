@@ -215,7 +215,7 @@ export function initPoskesdesScripts() {
   }
 
   const getPendaftar = (): Pasien[] => {
-    return cachedPasien.filter((item) => item.id && item.id.startsWith("P-"))
+    return cachedPasien.filter((item) => (item.id || item.id_pasien) && (item.id || item.id_pasien)!.startsWith("P-"))
   }
 
   const populateDropdown = (selectEl: HTMLSelectElement | null, infoEl: HTMLElement | null) => {
@@ -224,9 +224,9 @@ export function initPoskesdesScripts() {
     selectEl.innerHTML = '<option value="">-- Pilih Pasien Terdaftar --</option>'
     if (infoEl) infoEl.textContent = ""
     pasienList.forEach((pasien) => {
-      if (!pasien.id) return
+      if (!(pasien.id || pasien.id_pasien)) return
       const option = document.createElement("option")
-      option.value = pasien.id
+      option.value = (pasien.id || pasien.id_pasien) as string
       const nomorCM = pasien.nomor_cm || ""
       const usiaKehamilan = pasien.usia_kehamilan || 0
       if (selectEl.id.includes("anc") && usiaKehamilan > 0) {
@@ -322,7 +322,7 @@ export function initPoskesdesScripts() {
 
   const handlePasienSelect = (selectEl: HTMLSelectElement, infoEl: HTMLElement | null) => {
     const pasienId = selectEl.value
-    const pasien = getPendaftar().find((p) => p.id === pasienId)
+    const pasien = getPendaftar().find((p) => (p.id || p.id_pasien) === pasienId)
     if (!infoEl) return
     if (pasien) {
       const nomorCM = pasien.nomor_cm || "—"
@@ -535,7 +535,7 @@ export function initPoskesdesScripts() {
         window.alert("Pilih Pasien terlebih dahulu!")
         return
       }
-      const pasien = getPendaftar().find((p) => p.id === pasienId)
+      const pasien = getPendaftar().find((p) => (p.id || p.id_pasien) === pasienId)
       const formData = new FormData(form)
       const recordData = Object.fromEntries(formData.entries()) as Record<string, string>
       const namaPasien = pasien?.nama || infoElement?.textContent?.replace("Nama: ", "").split(" | ")[0] || "Pasien Tidak Dikenal"
@@ -544,7 +544,7 @@ export function initPoskesdesScripts() {
         const recordId = `${recordPrefix}-${Date.now().toString(36)}`
         const apiData: Record<string, unknown> = {
           id: recordId,
-          pasien_id: pasien?.id || undefined,
+          pasien_id: (pasien?.id || pasien?.id_pasien) || undefined,
           pasien_nama: namaPasien,
           tanggal: new Date().toISOString().substring(0, 10),
           ...recordData,
@@ -561,7 +561,7 @@ export function initPoskesdesScripts() {
             tanggal: jadwalKontrol,
             jenis: jadwalKeyName,
             cara: defaultCara,
-            pasien_id: pasien?.id,
+            pasien_id: pasien?.id || pasien?.id_pasien,
           })
         }
 
@@ -700,7 +700,7 @@ export function initPoskesdesScripts() {
         <div style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid #f1f7f7">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <strong style="font-size:16px;">${item.title}</strong>
-            <button class="small-btn" style="background:var(--danger); color:#fff; margin-left:10px;" data-delete-edu="${item.id}">Hapus</button>
+            <button class="small-btn" style="background:var(--danger); color:#fff; margin-left:10px;" data-delete-edu="${item.id || item.id_edukasi}">Hapus</button>
           </div>
           <p class="muted" style="margin:6px 0 0">${item.body}</p>
         </div>
@@ -853,7 +853,7 @@ export function initPoskesdesScripts() {
 
   const getDetailedAncData = () => {
     return cachedAnc.map((record) => ({
-      "ID Rekam": record.id,
+      "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
       "Pasien ID": record.pasien_id || "",
       "Nama Pasien": record.pasien_nama || "",
       "Tanggal Kunjungan": record.tanggal || "",
@@ -897,7 +897,7 @@ export function initPoskesdesScripts() {
 
   const getDetailedKbData = () => {
     return cachedKb.map((record) => ({
-      "ID Rekam": record.id,
+      "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
       "Pasien ID": record.pasien_id || "",
       "Nama Pasien": record.pasien_nama || "",
       "Tanggal Kunjungan": record.tanggal || "",
@@ -914,7 +914,7 @@ export function initPoskesdesScripts() {
 
   const getDetailedLansiaData = () => {
     return cachedLansia.map((record) => ({
-      "ID Rekam": record.id,
+      "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
       "Pasien ID": record.pasien_id || "",
       "Nama Pasien": record.pasien_nama || "",
       "Tanggal Kunjungan": record.tanggal || "",
@@ -1088,7 +1088,7 @@ export function initPoskesdesScripts() {
             return recordDate.startsWith(month)
           })
           .map((record) => ({
-            "ID Rekam": record.id,
+            "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
             "Pasien ID": record.pasien_id || "",
             "Nama Pasien": record.pasien_nama || "",
             "Tanggal Kunjungan": record.tanggal || "",
@@ -1139,7 +1139,7 @@ export function initPoskesdesScripts() {
             return recordDate.startsWith(month)
           })
           .map((record) => ({
-            "ID Rekam": record.id,
+            "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
             "Pasien ID": record.pasien_id || "",
             "Nama Pasien": record.pasien_nama || "",
             "Tanggal Kunjungan": record.tanggal || "",
@@ -1163,7 +1163,7 @@ export function initPoskesdesScripts() {
             return recordDate.startsWith(month)
           })
           .map((record) => ({
-            "ID Rekam": record.id,
+            "ID Rekam": (record.id || record.id_anc || record.id_kb || record.id_lansia),
             "Pasien ID": record.pasien_id || "",
             "Nama Pasien": record.pasien_nama || "",
             "Tanggal Kunjungan": record.tanggal || "",

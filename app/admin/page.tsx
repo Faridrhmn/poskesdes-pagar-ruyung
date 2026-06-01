@@ -264,7 +264,7 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {recentPasien.map((p) => (
-                    <tr key={p.id}>
+                    <tr key={p.id || p.id_pasien}>
                       <td>{p.nomor_cm}</td>
                       <td>{p.nama}</td>
                       <td>{p.no_hp}</td>
@@ -295,7 +295,7 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {upcomingJadwal.map((j) => (
-                    <tr key={j.id}>
+                    <tr key={j.id || j.id_pasien || j.id_anc || j.id_kb || j.id_lansia || j.id_jadwal || j.id_edukasi || j.id_admin}>
                       <td>{formatDate(j.tanggal)}</td>
                       <td>{j.nama}</td>
                       <td>

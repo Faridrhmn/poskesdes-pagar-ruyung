@@ -102,7 +102,7 @@ export function PasienFormSection() {
       setIsSaving(true)
 
       if (pasien) {
-        await pasienApi.update(pasien.id, {
+        await pasienApi.update((pasien.id || pasien.id_pasien), {
           nama: formData.nama.trim(),
           nik: formData.nik.trim() || undefined,
           no_kk: formData.no_kk.trim() || undefined,
