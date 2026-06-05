@@ -75,7 +75,7 @@ function project_base64url_decode($data) {
     return base64_decode(strtr($data, '-_', '+/'));
 }
 
-function generate_token($userId, $username, $role = 'regular', $ttlSeconds = 86400) {
+function generate_token($userId, $username, $role = 'regular', $ttlSeconds = 7200) {
     $header = project_base64url_encode(json_encode([ 'alg' => 'HS256', 'typ' => 'JWT' ]));
     $now = time();
     $payload = project_base64url_encode(json_encode([

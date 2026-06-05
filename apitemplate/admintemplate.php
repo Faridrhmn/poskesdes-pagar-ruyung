@@ -50,6 +50,12 @@ class AdminApi {
             return [ 'ok' => false, 'message' => 'Invalid credentials' ];
         }
 
+        if (password_needs_rehash($row['password_hash'], PASSWORD_BCRYPT, ['cost' => 12])) {
+            $newHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+            $stmtUpdate = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id = ?");
+            $stmtUpdate->execute([$newHash, $row['id']]);
+        }
+
         $token = generate_token((int)$row['id'], $row['username']);
         return [
             'ok' => true,
@@ -76,7 +82,7 @@ class AdminApi {
             return [ 'ok' => false, 'message' => 'Username already exists' ];
         }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
         $stmt = $this->conn->prepare("INSERT INTO " . $this->table_name . " (username, password_hash, created_at) VALUES (?, ?, NOW())");
         $stmt->bindParam(1, $username);
         $stmt->bindParam(2, $passwordHash);
@@ -114,7 +120,7 @@ class AdminApi {
         }
 
         // Update password
-        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
         $stmt = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id = ?");
         $stmt->bindParam(1, $newPasswordHash);
         $stmt->bindParam(2, $adminId);

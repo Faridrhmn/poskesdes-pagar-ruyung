@@ -21,6 +21,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = getToken()
     setIsAuthenticated(!!token)
     setIsLoading(false)
+
+    // Setup idle timeout (2 hours = 7200000 ms)
+    const IDLE_TIMEOUT = 2 * 60 * 60 * 1000
+    let timeoutId: NodeJS.Timeout
+
+    const handleLogout = () => {
+      removeToken()
+      setIsAuthenticated(false)
+      window.location.href = '/'
+    }
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId)
+      if (getToken()) {
+        timeoutId = setTimeout(handleLogout, IDLE_TIMEOUT)
+      }
+    }
+
+    // List of events to monitor for activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart']
+    events.forEach(event => document.addEventListener(event, resetTimer))
+    
+    // Initialize timer
+    resetTimer()
+
+    return () => {
+      clearTimeout(timeoutId)
+      events.forEach(event => document.removeEventListener(event, resetTimer))
+    }
   }, [])
 
   const login = async (username: string, password: string): Promise<AuthResponse> => {

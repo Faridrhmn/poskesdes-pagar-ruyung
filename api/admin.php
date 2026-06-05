@@ -46,6 +46,12 @@ class AdminApi {
             return [ 'ok' => false, 'message' => 'Invalid credentials' ];
         }
 
+        if (password_needs_rehash($row['password_hash'], PASSWORD_BCRYPT, ['cost' => 12])) {
+            $newHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+            $stmtUpdate = $this->conn->prepare("UPDATE " . $this->table_name . " SET password_hash = ? WHERE id_admin = ?");
+            $stmtUpdate->execute([$newHash, $row['id']]);
+        }
+
         $role = $row['role'] ?? 'regular';
         
         // Only superadmin can login to admin dashboard
@@ -89,7 +95,7 @@ class AdminApi {
             $role = 'regular';
         }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
         $stmt = $this->conn->prepare("INSERT INTO " . $this->table_name . " (username, password_hash, role, created_at) VALUES (?, ?, ?, NOW())");
         $stmt->bindParam(1, $username);
         $stmt->bindParam(2, $passwordHash);
@@ -225,7 +231,7 @@ class AdminApi {
         $checkStmt = $this->conn->query("SHOW COLUMNS FROM " . $this->table_name . " LIKE 'updated_at'");
         $hasUpdatedAt = $checkStmt->rowCount() > 0;
         
-        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
         
         // Build update query based on whether updated_at exists
         if ($hasUpdatedAt) {
@@ -270,7 +276,7 @@ class AdminApi {
         $hasUpdatedAt = $checkStmt->rowCount() > 0;
 
         // Update password
-        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
         
         // Build update query based on whether updated_at exists
         if ($hasUpdatedAt) {
