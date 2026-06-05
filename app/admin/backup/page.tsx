@@ -10,7 +10,7 @@ interface BackupFile {
   created: string
 }
 
-const API_BASE_URL = "https://api.vadr.my.id/bidan"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost/web-bidan-main/api"
 
 export default function AdminBackupPage() {
   const router = useRouter()

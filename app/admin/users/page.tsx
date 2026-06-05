@@ -12,7 +12,7 @@ interface Admin {
   updated_at?: string
 }
 
-const API_BASE_URL = "https://api.vadr.my.id/bidan"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost/web-bidan-main/api"
 
 export default function AdminUsersPage() {
   const router = useRouter()

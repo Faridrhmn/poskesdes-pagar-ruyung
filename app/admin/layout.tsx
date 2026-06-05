@@ -11,6 +11,8 @@ interface AdminInfo {
   role: string
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost/web-bidan-main/api"
+
 export default function AdminLayout({
   children,
 }: {
@@ -45,7 +47,7 @@ export default function AdminLayout({
       // If not in localStorage, fetch from API
       if (!adminInfo) {
         try {
-          const response = await fetch("https://api.vadr.my.id/bidan/admin.php/me", {
+          const response = await fetch(`${API_BASE_URL}/admin.php/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
