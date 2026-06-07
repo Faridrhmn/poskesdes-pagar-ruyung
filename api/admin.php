@@ -54,14 +54,6 @@ class AdminApi {
 
         $role = $row['role'] ?? 'regular';
         
-        // Only superadmin can login to admin dashboard
-        if ($role !== 'superadmin') {
-            return [ 
-                'ok' => false, 
-                'message' => 'Akses ditolak. Hanya superadmin yang dapat login ke admin dashboard. Silakan login di homepage untuk akses regular.' 
-            ];
-        }
-        
         $token = generate_token((int)$row['id'], $row['username'], $role);
         return [
             'ok' => true,
